@@ -225,6 +225,12 @@ final class ParserTest extends AbstractTestCase
                 new ParsedShortcode(new Shortcode('y', array(), ' ] [] [ [z] [/#] [/z] [ [] ] [/] ', null), '[y] ] [] [ [z] [/#] [/z] [ [] ] [/] [/y]', 27),
                 new ParsedShortcode(new Shortcode('z', array(), ' [ [/ [/] /] ] ', null), '[z] [ [/ [/] /] ] [/z]', 70),
             )),
+            array($s, '[x=/[/] [y a=/"//] [z=http://url/] [a=http://url ]', array(
+                new ParsedShortcode(new Shortcode('x', array(), null, '/['), '[x=/[/]', 0),
+                new ParsedShortcode(new Shortcode('y', array('a' => '/"/'), null, null), '[y a=/"//]', 8),
+                new ParsedShortcode(new Shortcode('z', array(), null, 'http://url'), '[z=http://url/]', 19),
+                new ParsedShortcode(new Shortcode('a', array(), null, 'http://url'), '[a=http://url ]', 35),
+            )),
         );
 
         /**
@@ -239,7 +245,7 @@ final class ParserTest extends AbstractTestCase
          *
          * Tests cases from array above with identifiers in the array below must be skipped.
          */
-        $wordpressSkip = array(3, 6, 16, 21, 22, 23, 25, 32, 33, 34, 46, 47, 49);
+        $wordpressSkip = array(3, 6, 16, 21, 22, 23, 25, 32, 33, 34, 46, 47, 49, 51);
         $result = array();
         foreach($tests as $key => $test) {
             $syntax = array_shift($test);
