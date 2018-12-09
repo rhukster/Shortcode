@@ -260,6 +260,30 @@ final class ParserTest extends AbstractTestCase
         return $result;
     }
 
+    public function testValueModeAggressive()
+    {
+        $parser = new RegularParser(new CommonSyntax());
+        $parser->valueMode = RegularParser::VALUE_AGGRESSIVE;
+        $parsed = $parser->parse('[x=/[/] [y a=/"//] [z=http://url/] [a=http://url ]');
+        $tested = array(
+            new ParsedShortcode(new Shortcode('x', array(), null, '/[/'), '[x=/[/]', 0),
+            new ParsedShortcode(new Shortcode('y', array('a' => '/"//'), null, null), '[y a=/"//]', 8),
+            new ParsedShortcode(new Shortcode('z', array(), null, 'http://url/'), '[z=http://url/]', 19),
+            new ParsedShortcode(new Shortcode('a', array(), null, 'http://url'), '[a=http://url ]', 35),
+        );
+
+        $count = count($tested);
+        static::assertCount($count, $parsed, 'counts');
+        for ($i = 0; $i < $count; $i++) {
+            static::assertSame($tested[$i]->getName(), $parsed[$i]->getName(), 'name');
+            static::assertSame($tested[$i]->getParameters(), $parsed[$i]->getParameters(), 'parameters');
+            static::assertSame($tested[$i]->getContent(), $parsed[$i]->getContent(), 'content');
+            static::assertSame($tested[$i]->getText(), $parsed[$i]->getText(), 'text');
+            static::assertSame($tested[$i]->getOffset(), $parsed[$i]->getOffset(), 'offset');
+            static::assertSame($tested[$i]->getBbCode(), $parsed[$i]->getBbCode(), 'bbCode');
+        }
+    }
+
     public function testWordPress()
     {
         $parser = new WordpressParser();
